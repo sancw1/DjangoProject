@@ -1,0 +1,142 @@
+{% extends 'main/layout.html' %}
+{% load static %}
+
+{% block content %}
+
+{% if not isAdmin %}
+
+<div style="display: flexbox; flex-wrap: wrap;">
+
+    <!-- Панель заголовка -->
+
+    <div style="margin-left: 300px; padding-top: 25px; padding-bottom: 15px; display: flexbox; flex-wrap: wrap;">
+        <h1 style="color: #D2D3FA;"> {{ film.name }} </h1>
+        <h1 >
+            {% if film.isStaticImage %}
+                <img src="{% static film.img %}" style="width: 300px; height: 400px; margin-top: 10px;">
+            {% else %}
+                <img src={{ film.img }} style="width: 300px; height: 400px; margin-top: 10px;">
+            {% endif %}
+        </h1>
+    </div>
+
+    <!-- Оценка -->
+    <div style="margin-left: 300px; display: inline-flex; flex-wrap: wrap;">
+        {% for i in film.rangeYellow %}
+        <h1 ><img src="{% static 'main/imgs/yellowStar.png' %}" style="width: 50px; height: 80px; margin-top: 10px;"> </h1>
+        {% endfor %}
+        {% for i in film.rangeBlack %}
+        <h1 ><img src="{% static 'main/imgs/star.png' %}" style="margin-left: -10px; width: 80px; height: 100px;" > </h1>
+        {% endfor %}
+    </div>
+
+    <!-- Описание -->
+    <div style="margin-left: 300px; padding-top: 25px; padding-bottom: 15px; display: flexbox; flex-wrap: wrap;">
+        <h2 style="color: #D2D3FA;"> Жанр: {{film.category}} </h2>
+    </div>
+    <div style="margin-left: 300px; padding-top: 25px; padding-bottom: 15px; display: flexbox; flex-wrap: wrap;">
+        <h1 style="color: #D2D3FA;"> Описание: </h1>
+        <p style="color: #D2D3FA; width: 90%;">{{film.about}}</p>
+    </div>
+</div>
+
+{% else %}
+
+<div style="display: block; flex-wrap: wrap;">
+
+    <form method="post" action="ChangeFilmDetail" enctype="multipart/form-data"> 
+    <!-- Панель заголовка -->
+
+    <input type="hidden" name="OldFilmName" value="{{film.name}}" >
+
+    <div style="margin-left: 300px; padding-top: 25px; padding-bottom: 15px; display: flexbox; flex-wrap: wrap;">
+        <input type="text" value= "{{film.name}}" name="name" placeholder="film name" oninput="OnNameChange(this)" id="NameInput">
+        <h1 >
+            {% if film.isStaticImage %}
+                <img src="{% static film.img %}" style="width: 300px; height: 400px; margin-top: 10px;">
+            {% else %}
+                <img src={{ film.img }} style="width: 300px; height: 400px; margin-top: 10px;">
+            {% endif %}
+        </h1>
+    </div>
+
+    {% csrf_token %}
+    <div style="margin-left: 300px;">{{ form.as_p }}</div>
+
+    <!-- Оценка -->
+    <div style="margin-left: 300px; display: inline-flex; flex-wrap: wrap;">
+        <input type="number" name="raiting" value = "{{ film.rangeYellow }}" min="1" max="5" placeholder="Оценка" onchange="OnRaitingChange(this)" id="RaitingInput">
+    </div>
+
+    <!-- Описание -->
+    <div style="margin-left: 300px; padding-top: 25px; padding-bottom: 15px; display: flexbox; flex-wrap: wrap;">
+        <h2 style="color: #D2D3FA;"> Жанр: </h2>
+
+        <select name="genre">
+            {% for cat in categoryes %}
+                {% if cat.genre == film.category %}
+                    <option value= {{ cat.genre }} selected>{{ cat.genre }}</option>
+                {% else %}
+                    <option value= {{ cat.genre }}>{{ cat.genre }}</option>
+                {% endif %}
+            {% endfor %}
+        </select>
+    </div>
+    <div style="margin-left: 300px; padding-top: 25px; padding-bottom: 15px; display: flexbox; flex-wrap: wrap;">
+        <h1 style="color: #D2D3FA;"> Описание: </h1>
+        <textarea name="about" placeholder="Описание" style="width: 550px;" rows="4"> {{film.about}} </textarea>
+    </div>
+
+    <button style="margin-left: 300px; display: none;" id="SaveButton" type="submit" >Save</button>
+
+    </form>
+
+    <form method="post" action="DeleteFilm">
+        {% csrf_token %}
+        <input type="hidden" name="OldFilmName" value="{{film.name}}" >
+        <button style="margin-left: 300px; background-color: rgb(131, 60, 60); margin-top: 10px;"> Delete </button>
+    </form>
+</div>
+
+<script>
+    var nameValid = true
+    var raitingValid = false
+
+    function OnNameChange(item){
+        if(item.value.length > 0 && item.value.length < 30){
+            item.style.color = "black"
+            nameValid = true
+        }
+        else{
+            item.style.color = "red"
+            nameValid = false
+        }
+        IsValid()
+    }
+
+    function OnRaitingChange(item){
+        if(parseInt(item.value) >= 1 && parseInt(item.value) <= 5){
+            item.style.color = "black"
+            raitingValid = true
+        }
+        else{
+            item.style.color = "red"
+            raitingValid = false
+        }
+        IsValid()
+    }
+
+    function IsValid(){
+        if(nameValid && raitingValid){
+            document.getElementById("SaveButton").style.display = "block";
+        }
+        else{
+            document.getElementById("SaveButton").style.display = "none";
+        }
+    }
+
+</script>
+
+{% endif %}
+
+{% endblock %}

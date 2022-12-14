@@ -1,0 +1,112 @@
+{% extends 'main/layout.html' %}
+{% load static %}
+
+{% block content %}
+<div style="display: block; flex-wrap: wrap;">
+
+    <form method="post" action="AddFilm" enctype="multipart/form-data"> 
+    <!-- Панель заголовка -->
+
+    <div style="margin-left: 300px; padding-top: 25px; padding-bottom: 15px; display: flexbox; flex-wrap: wrap;">
+        <input type="text" name="name" placeholder="film name" oninput="OnNameInput(this)">
+    </div>
+
+    {% csrf_token %}
+    <div style="margin-left: 300px;">{{ form.as_p }}</div>
+
+    <!-- Оценка -->
+    <div style="margin-left: 300px; display: inline-flex; flex-wrap: wrap;">
+        <input type="number" name="raiting" min="1" max="5" placeholder="Оценка" oninput="OnRaitingInput(this)">
+    </div>
+
+    <!-- Описание -->
+    <div style="margin-left: 300px; padding-top: 25px; padding-bottom: 15px; display: flexbox; flex-wrap: wrap;">
+        <h2 style="color: #D2D3FA;"> Жанр: </h2>
+
+        <select name="genre" onchange="OnGanreSelect(this)">
+            {% for cat in categoryes %}
+                {% if cat.genre == film.category %}
+                    <option value= {{ cat.genre }} selected>{{ cat.genre }}</option>
+                {% else %}
+                    <option value= {{ cat.genre }}>{{ cat.genre }}</option>
+                {% endif %}
+            {% endfor %}
+        </select>
+    </div>
+    <div style="margin-left: 300px; padding-top: 25px; padding-bottom: 15px; display: flexbox; flex-wrap: wrap;">
+        <h1 style="color: #D2D3FA;"> Описание: </h1>
+        <textarea name="about" placeholder="Описание" style="width: 550px;" oninput="OnAboutInput(this)">  </textarea>
+    </div>
+
+    <button style="margin-left: 300px; display: none;" type="submit" id="SaveButton">Save</button>
+
+    </form>
+</div>
+
+<script>
+    var nameValid = false
+    var raitingvalid = false
+    var ganrevalid = false
+    var about = false
+
+    function OnNameInput(item){
+        if(item.value.length > 0 && item.value.length < 30){
+            item.style.color = "black"
+            nameValid = true
+        }
+        else{
+            item.style.color = "red"
+            nameValid = false
+        }
+        IsValid()
+    }
+
+    function OnRaitingInput(item){
+        console.log(parseInt(item.value))
+        if(parseInt(item.value) >= 1 && parseInt(item.value) <= 5){
+            item.style.color = "black"
+            raitingvalid = true
+        }
+        else{
+            item.style.color = "red"
+            raitingvalid = false
+        }
+        IsValid()
+    }
+
+    function OnGanreSelect(item){
+        if(item.value != "All"){
+            item.style.color = "black"
+            ganrevalid = true
+        }
+        else{
+            item.style.color = "red"
+            ganrevalid = false
+        }
+
+        IsValid()
+    }
+
+    function OnAboutInput(item){
+        if(item.value.length > 0){
+            item.style.color = "black"
+            about = true
+        }
+        else{
+            item.style.color = "red"
+            about = false
+        }
+        IsValid()
+    }
+
+    function IsValid(){
+        console.log(nameValid + " "  + raitingvalid + " "  + ganrevalid + " "  + about)
+        if(nameValid && raitingvalid && ganrevalid && about){
+            document.getElementById("SaveButton").style.display = "block"
+        }
+        else{
+            document.getElementById("SaveButton").style.display = "none"
+        }
+    }
+</script>
+{% endblock %}

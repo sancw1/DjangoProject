@@ -1,0 +1,33 @@
+.filmsblock{
+    margin-left: 300px; 
+    padding-top: 20px;
+
+    display: inline-flex;
+    flex-wrap: wrap;
+
+    width: 80%;
+}
+
+.filmsblock div:hover{
+    animation: upper 2s linear 0.5s 1 normal forwards;
+}
+
+@keyframes upper{
+    100%{
+        transform: scale(1.1);
+    }
+}
+
+.filmsblock div{
+    display: block; 
+    padding: 20px;
+}
+
+.filmsblock div a{
+    text-decoration: none;
+}
+
+.filmsblock div button{
+    margin-left: 80px;
+    color: #E5C8FA;
+}

@@ -1,0 +1,42 @@
+{% extends 'main/layout.html' %}
+{% load static %}
+
+<!-- Панель категории -->
+  
+{% block category %}
+
+<div style="margin-left: 300px; padding-top: 25px; padding-bottom: 15px;">
+    <h1 style="color: #D2D3FA;"> {{ category }}</h1>
+</div>
+
+{% endblock %}
+
+<!-- Панель с фильмами -->
+
+{% block content %}
+
+
+<div class="filmsblock">
+    {% for film in films %}
+
+        <div>
+            <form method="post" action="film">
+                {% csrf_token %}
+                <input type="hidden" name="filmName" value="{{ film.title }}">
+                <button style="background-color: rgba(28,28,28,0); border: none;" >
+                <h1>
+                    {% if film.isStaticImage %}
+                        <img src="{% static film.img %}" width="250" height="380">
+                    {% else %}
+                        <img src= {{ film.img }} width="250" height="380">
+                    {% endif %}
+                </h1>
+                <h4 style="color: #E5C8FA;">{{ film.title }}</h4>
+                </button>
+            </form>
+        </div>
+
+    {% endfor %}
+</div>
+
+{% endblock %}
